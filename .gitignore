@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+env/
+.env
+*.egg-info/
+dist/
+build/
+
+# Model weights (large files — store in Git LFS or share separately)
+model/weights/*.pkl
+model/weights/*.h5
+model/weights/*.onnx
+model/weights/*.tflite
+
+# Dataset (large)
+model/dataset/*.csv
+!model/dataset/sample_landmarks.csv
+
+# Database
+backend/signbridge.db
+
+# Outputs
+model/confusion_matrix.png
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (if using npm for tooling)
+node_modules/

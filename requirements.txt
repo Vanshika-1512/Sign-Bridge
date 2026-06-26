@@ -1,0 +1,32 @@
+# SignBridge Backend Dependencies
+# ================================
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+websockets==12.0
+
+# ML / Computer Vision
+mediapipe==0.10.14
+opencv-python==4.10.0.84
+numpy==1.26.4
+scikit-learn==1.5.1
+
+# Data handling
+pandas==2.2.2
+
+# Deep learning (optional - for TF.js model export)
+# tensorflow==2.17.0
+# tensorflowjs==4.21.0
+
+# Utilities
+pydantic==2.8.2
+python-dotenv==1.0.1
+httpx==0.27.2
+Pillow==10.4.0
+
+# Development
+pytest==8.3.2
+httpx==0.27.2
