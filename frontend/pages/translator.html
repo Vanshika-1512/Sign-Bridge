@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>/* Prevent dark mode flash */
+    (function(){var t=localStorage.getItem("sb_theme");if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Translator — SignBridge</title>
+  <link rel="stylesheet" href="../assets/css/main.css"/>
+  <link rel="stylesheet" href="../assets/css/translator.css"/>
+  <link rel="stylesheet" href="../assets/css/words.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/darkmode.css"/>
+</head>
+<body class="translator-page">
+
+  <nav class="nav" id="nav">
+    <a href="../index.html" class="nav__logo"><span class="nav__logo-icon">✦</span> SignBridge</a>
+    <ul class="nav__links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="translator.html" class="active">Translate</a></li>
+      <li><a href="practice.html">Practice</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="container">
+      <div>
+        <h1>Sign Language Translator</h1>
+        <p>Letters (A–Y) · Common words · Phrases</p>
+      </div>
+      <div class="page-header__controls" style="flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="status-badge status-badge--idle" id="statusBadge">
+          <span class="status-dot"></span>
+          <span id="statusText">Camera off</span>
+        </div>
+        <span id="backendStatus" style="font-size:.78rem;color:var(--col-muted);">🔄 Checking backend...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE SWITCHER BAR -->
+  <div class="mode-bar">
+    <div class="container">
+      <div class="mode-bar__inner">
+        <span class="mode-bar__title">Detection Mode:</span>
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="btnModeLetters">🔤 Letters</button>
+          <button class="mode-tab" id="btnModeWords">💬 Words</button>
+          <button class="mode-tab" id="btnModeBoth">✨ Both</button>
+        </div>
+        <span class="mode-bar__hint" id="modeLabel">Letter Mode</span>
+        <span class="mode-bar__keys">Shortcuts: <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span>
+      </div>
+    </div>
+  </div>
+
+  <main class="translator-main">
+    <div class="container">
+      <div class="translator-grid">
+
+        <!-- LEFT: CAMERA -->
+        <div>
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__title">📷 Live Camera Feed</span>
+              <span id="fpsCounter" style="font-size:.8rem;color:var(--col-muted);">— fps</span>
+            </div>
+            <div class="panel__body">
+              <div class="video-container">
+                <video id="webcamFeed" autoplay playsinline muted></video>
+                <canvas id="overlayCanvas"></canvas>
+                <div class="video-placeholder" id="videoPlaceholder">
+                  <div class="video-placeholder__icon">🎥</div>
+                  <p>Click "Start Camera" to begin</p>
+                </div>
+              </div>
+              <div class="video-controls">
+                <button class="btn btn--primary" id="btnStartCamera">▶ Start Camera</button>
+                <button class="btn btn--danger" id="btnStopCamera" style="display:none;">⬛ Stop Camera</button>
+              </div>
+              <div class="detection-info">
+                <div class="detection-stat">
+                  <div class="detection-stat__label">Gesture</div>
+                  <div class="detection-stat__value highlight" id="statGesture">—</div>
+                </div>
+                <div class="detection-stat">
+                  <div class="detection-stat__label">Frames</div>
+                  <div class="detection-stat__value" id="statFrames">0</div>
+                </div>
+              </div>
+              <div class="confidence-bar-wrap">
+                <label><span>Confidence</span><span id="confValue">0%</span></label>
+                <div class="confidence-bar"><div class="confidence-bar__fill" id="confBar"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIPS -->
+          <div class="instructions" style="margin-top:20px;">
+            <h4>💡 Tips for best results</h4>
+            <ol>
+              <li>Hold gestures steady for ~1 second</li>
+              <li>Good lighting, plain background</li>
+              <li>Hand 30–60 cm from camera</li>
+              <li>Switch modes with buttons or keys <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd></li>
+              <li>Click any word card below to insert it manually</li>
+            </ol>
+          </div>
+
+          <!-- SETTINGS -->
+          <div class="panel" style="margin-top:20px;">
+            <div class="panel__header"><span class="panel__title">⚙️ Settings</span></div>
+            <div class="panel__body">
+              <div class="settings-row">
+                <div><div class="settings-row__label">Auto-append</div><div class="settings-row__desc">Add after holding gesture</div></div>
+                <label class="toggle"><input type="checkbox" id="togAutoAppend" checked><span class="toggle__slider"></span></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-row__label">Text-to-Speech</div><div class="settings-row__desc">Speak words aloud</div></div>
+                <label class="toggle"><input type="checkbox" id="togTTS"><span class="toggle__slider"></span></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-row__label">Show landmarks</div><div class="settings-row__desc">Draw hand skeleton</div></div>
+                <label class="toggle"><input type="checkbox" id="togLandmarks" checked><span class="toggle__slider"></span></label>
+              </div>
+              <div class="settings-row">
+                <div><div class="settings-row__label">Confidence threshold</div><div class="settings-row__desc">Min: <span id="threshVal">70</span>%</div></div>
+                <input type="range" id="confThreshold" min="40" max="95" value="70" style="width:100px;accent-color:var(--col-primary);">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: OUTPUT -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- CURRENT DETECTION -->
+          <div class="panel">
+            <div class="panel__header"><span class="panel__title">🔍 Current Detection</span></div>
+            <div class="panel__body">
+              <div class="letter-display">
+                <div class="letter-big" id="bigLetter">—</div>
+              </div>
+              <!-- Word badge shown when a word gesture is detected -->
+              <div style="text-align:center;margin-top:-8px;margin-bottom:12px;">
+                <span class="word-detected-badge" id="wordBadge" style="display:none;"></span>
+              </div>
+              <div class="text-controls">
+                <button class="btn btn--primary" id="btnAddLetter" disabled>+ Add</button>
+                <button class="btn btn--ghost" id="btnAddSpace">⎵ Space</button>
+                <button class="btn btn--ghost" id="btnBackspace">⌫ Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSLATED TEXT -->
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__title">📝 Translated Text</span>
+              <button class="btn btn--ghost" id="btnCopyText" style="padding:6px 12px;font-size:.8rem;">📋 Copy</button>
+            </div>
+            <div class="panel__body">
+              <div class="text-output" id="textOutput">
+                <span id="translatedText"></span><span class="text-output__cursor"></span>
+              </div>
+              <div class="text-controls" style="margin-top:12px;">
+                <button class="btn btn--primary" id="btnSpeak" disabled>🔊 Speak</button>
+                <button class="btn btn--ghost" id="btnClear">🗑 Clear</button>
+                <button class="btn btn--ghost" id="btnSaveHistory">💾 Save</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- HISTORY -->
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__title">🕐 History</span>
+              <button class="btn btn--ghost" id="btnClearHistory" style="padding:6px 12px;font-size:.8rem;">Clear</button>
+            </div>
+            <div class="panel__body">
+              <div class="history-log" id="historyLog"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFERENCE PANELS -->
+
+      <!-- LETTER REFERENCE -->
+      <div class="panel" id="letterRefPanel" style="margin-top:24px;">
+        <div class="panel__header">
+          <span class="panel__title">🔤 ASL Alphabet Reference</span>
+          <span style="font-size:.8rem;color:var(--col-muted);">Highlighted = currently detected</span>
+        </div>
+        <div class="panel__body">
+          <div class="asl-grid" id="aslGrid"></div>
+        </div>
+      </div>
+
+      <!-- WORD GESTURE REFERENCE -->
+      <div class="panel" id="wordRefPanel" style="margin-top:24px;display:none;">
+        <div class="panel__header">
+          <span class="panel__title">💬 Word Gesture Reference</span>
+          <span style="font-size:.8rem;color:var(--col-muted);">Click a card to insert · Highlighted = detected</span>
+        </div>
+        <div class="panel__body">
+          <div class="word-grid" id="wordGrid"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/darkmode.js"></script>
+  <script src="../assets/js/gesture-classifier.js"></script>
+  <script src="../assets/js/translator.js"></script>
+</body>
+</html>

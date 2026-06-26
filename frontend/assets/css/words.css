@@ -1,0 +1,206 @@
+/* ==============================
+   WORD GESTURES & MODE BAR
+   words.css
+============================== */
+
+/* ── MODE BAR ─────────────────────────────────────── */
+.mode-bar {
+  background: var(--col-surface);
+  border-bottom: 1px solid var(--col-border);
+  padding: 10px 0;
+  position: sticky;
+  top: 64px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(91,94,247,.06);
+}
+.mode-bar__inner {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.mode-bar__title {
+  font-size: .85rem; color: var(--col-muted); font-weight: 500; flex-shrink: 0;
+}
+.mode-bar__hint {
+  font-size: .82rem; color: var(--col-primary); font-weight: 500;
+  background: rgba(91,94,247,.08);
+  padding: 3px 10px; border-radius: 100px;
+}
+.mode-bar__keys {
+  font-size: .78rem; color: var(--col-muted); margin-left: auto;
+}
+kbd {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--col-border);
+  border-radius: 5px;
+  background: var(--col-bg);
+  font-size: .75rem;
+  font-family: monospace;
+  box-shadow: 0 1px 0 var(--col-border);
+}
+
+/* MODE TABS */
+.mode-tabs {
+  display: flex; gap: 6px;
+}
+.mode-tab {
+  padding: 7px 16px;
+  border-radius: var(--radius-xl);
+  font-size: .85rem; font-weight: 500;
+  border: 1.5px solid var(--col-border);
+  background: var(--col-bg);
+  color: var(--col-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.mode-tab:hover {
+  border-color: var(--col-accent);
+  color: var(--col-primary);
+  background: rgba(91,94,247,.05);
+}
+.mode-tab.active {
+  background: var(--col-primary);
+  color: #fff;
+  border-color: var(--col-primary);
+  box-shadow: 0 2px 10px rgba(91,94,247,.3);
+}
+
+/* ── WORD DETECTED BADGE ──────────────────────────── */
+.word-detected-badge {
+  display: inline-block;
+  padding: 6px 20px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(129,140,248,.4);
+  animation: wordPop .3s ease;
+}
+@keyframes wordPop {
+  0%   { transform: scale(0.8); opacity: 0; }
+  60%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── WORD GRID ────────────────────────────────────── */
+.word-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.word-grid__header {
+  grid-column: 1 / -1;
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--col-muted);
+  padding: 12px 0 4px;
+  border-top: 1px solid var(--col-border);
+  margin-top: 4px;
+}
+.word-grid__header:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+
+.word-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--col-border);
+  background: var(--col-bg);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.word-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(91,94,247,.05), rgba(167,139,250,.05));
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.word-card:hover {
+  border-color: var(--col-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.word-card:hover::before { opacity: 1; }
+.word-card:active { transform: translateY(0); }
+
+.word-card__emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+  display: block;
+}
+.word-card__label {
+  font-weight: 600;
+  font-size: .85rem;
+  color: var(--col-ink);
+  display: block;
+}
+.word-card__desc {
+  font-size: .7rem;
+  color: var(--col-muted);
+  line-height: 1.3;
+  display: block;
+}
+
+/* Active / detected state */
+.word-card.active-word {
+  border-color: var(--col-primary);
+  background: rgba(91,94,247,.08);
+  box-shadow: 0 0 0 3px rgba(91,94,247,.15);
+  transform: translateY(-2px);
+}
+.word-card.active-word .word-card__label {
+  color: var(--col-primary);
+}
+.word-card.active-word::before { opacity: 1; }
+
+/* Pulse ring on active word card */
+.word-card.active-word::after {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: calc(var(--radius-md) + 3px);
+  border: 2px solid var(--col-primary);
+  animation: wordRing 1s ease-in-out infinite;
+}
+@keyframes wordRing {
+  0%,100% { opacity: .6; transform: scale(1); }
+  50%      { opacity: 0; transform: scale(1.04); }
+}
+
+/* ── CATEGORY COLORS ──────────────────────────────── */
+.word-card[id^="word-Hello"],
+.word-card[id^="word-Bye"] {
+  border-top: 3px solid #60a5fa;
+}
+.word-card[id^="word-Yes"],
+.word-card[id^="word-No"] {
+  border-top: 3px solid #f87171;
+}
+.word-card[id^="word-Thank"],
+.word-card[id^="word-Please"],
+.word-card[id^="word-Sorry"] {
+  border-top: 3px solid #34d399;
+}
+.word-card[id^="word-I-Love"] {
+  border-top: 3px solid #f472b6;
+}
+.word-card[id^="word-Help"],
+.word-card[id^="word-Good"],
+.word-card[id^="word-Bad"] {
+  border-top: 3px solid #fb923c;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .mode-bar__keys { display: none; }
+  .word-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+  .mode-tabs { gap: 4px; }
+  .mode-tab { padding: 6px 12px; font-size: .8rem; }
+}

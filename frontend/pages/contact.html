@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>/* Prevent dark mode flash */
+    (function(){var t=localStorage.getItem("sb_theme");if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact — SignBridge</title>
+  <link rel="stylesheet" href="../assets/css/main.css"/>
+  <link rel="stylesheet" href="../assets/css/pages.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/darkmode.css"/>
+</head>
+<body class="inner-page">
+
+  <nav class="nav" id="nav">
+    <a href="../index.html" class="nav__logo"><span class="nav__logo-icon">✦</span> SignBridge</a>
+    <ul class="nav__links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="translator.html">Translate</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <button class="nav__cta" onclick="window.location='translator.html'">Start Translating</button>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="inner-hero">
+    <div class="container">
+      <span class="section-tag">Get in Touch</span>
+      <h1>We'd love to <em>hear</em> from you</h1>
+      <p>Report a bug, suggest a feature, or contribute training data — every message matters.</p>
+    </div>
+  </div>
+
+  <section class="content-section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <div class="contact-info">
+          <div>
+            <h2>Let's make communication more inclusive</h2>
+            <p style="color:var(--col-muted);line-height:1.75;margin-top:12px;">
+              SignBridge is an open-source project. We welcome bug reports, feature ideas,
+              contributions to our training dataset, and general feedback.
+            </p>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail__icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <p>hello@signbridge.app</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail__icon">🐙</div>
+            <div>
+              <h4>GitHub</h4>
+              <p>github.com/signbridge/signbridge</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail__icon">🤟</div>
+            <div>
+              <h4>Contribute Data</h4>
+              <p>Help us improve accuracy — donate gesture samples via the form</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail__icon">💬</div>
+            <div>
+              <h4>Community Discord</h4>
+              <p>discord.gg/signbridge — join 500+ contributors</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:24px;">Send a message</h3>
+
+          <div id="formSuccess" class="form-success">
+            <h3>✅ Message sent!</h3>
+            <p>Thanks for reaching out. We'll get back to you within 48 hours.</p>
+          </div>
+
+          <div id="feedbackForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fname">First name *</label>
+                <input type="text" id="fname" name="fname" placeholder="Arjun" required/>
+              </div>
+              <div class="form-group">
+                <label for="lname">Last name</label>
+                <input type="text" id="lname" name="lname" placeholder="Sharma"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email address *</label>
+              <input type="email" id="email" name="email" placeholder="arjun@email.com" required/>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject *</label>
+              <select id="subject" name="subject" required>
+                <option value="" disabled selected>Select a topic…</option>
+                <option value="bug">🐛 Bug report</option>
+                <option value="feature">💡 Feature request</option>
+                <option value="data">🤟 Contribute training data</option>
+                <option value="accuracy">📊 Accuracy issue</option>
+                <option value="accessibility">♿ Accessibility feedback</option>
+                <option value="other">💬 General feedback</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea id="message" name="message" placeholder="Describe your feedback, bug, or idea in detail…" required></textarea>
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+              <input type="checkbox" id="subscribe" name="subscribe"
+                style="width:18px;height:18px;accent-color:var(--col-primary);flex-shrink:0;">
+              <label for="subscribe" style="margin-bottom:0;font-size:.85rem;color:var(--col-muted);cursor:pointer;">
+                Subscribe to SignBridge updates (no spam — max 1 email/month)
+              </label>
+            </div>
+            <div class="form-submit">
+              <button class="btn btn--primary btn--large" id="btnSubmit" type="button">
+                Send Message →
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <span class="footer__logo">✦ SignBridge</span>
+        <p>Built with ❤️ for accessibility</p>
+        <nav class="footer__nav">
+          <a href="../index.html">Home</a>
+          <a href="translator.html">Translate</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/darkmode.js"></script>
+  <script>
+    document.getElementById('btnSubmit').addEventListener('click', function() {
+      const fname = document.getElementById('fname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value.trim();
+      if (!fname || !email || !subject || !message) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      // Simulate submission
+      document.getElementById('feedbackForm').style.display = 'none';
+      document.getElementById('formSuccess').classList.add('visible');
+    });
+  </script>
+</body>
+</html>

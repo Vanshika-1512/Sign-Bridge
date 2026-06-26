@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>/* Prevent dark mode flash */
+    (function(){var t=localStorage.getItem("sb_theme");if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — SignBridge</title>
+  <link rel="stylesheet" href="../assets/css/main.css"/>
+  <link rel="stylesheet" href="../assets/css/pages.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/darkmode.css"/>
+</head>
+<body class="inner-page">
+
+  <nav class="nav" id="nav">
+    <a href="../index.html" class="nav__logo"><span class="nav__logo-icon">✦</span> SignBridge</a>
+    <ul class="nav__links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="translator.html">Translate</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav__cta" onclick="window.location='translator.html'">Start Translating</button>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <div class="inner-hero">
+    <div class="container">
+      <span class="section-tag">About SignBridge</span>
+      <h1>Technology that <em>listens</em><br/>to your hands</h1>
+      <p>Learn how our AI pipeline translates sign language gestures into text — and why it matters.</p>
+    </div>
+  </div>
+
+  <!-- WHY IT MATTERS -->
+  <section class="content-section">
+    <div class="container">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-card__num">430M+</div>
+          <p>People worldwide with disabling hearing loss (WHO)</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num">70M+</div>
+          <p>Deaf people globally who use sign language</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num">300+</div>
+          <p>Sign languages used around the world</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__num">~1%</div>
+          <p>of hearing people know any sign language</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="content-section">
+    <div class="container">
+      <div class="two-col">
+        <div class="prose">
+          <span class="section-tag">AI Pipeline</span>
+          <h2>From pixels to words</h2>
+          <p>SignBridge works entirely in your browser using WebAssembly-compiled computer vision models. No video is ever sent to our servers — your privacy is preserved by design.</p>
+          <p>Each animation frame captured from your webcam goes through a multi-stage pipeline: hand detection, landmark extraction, feature engineering, and finally gesture classification.</p>
+          <p>The classifier maps a 63-dimensional vector of hand landmark coordinates to one of the 26 ASL letters, using a lightweight neural network fine-tuned on thousands of gestures.</p>
+        </div>
+        <div class="visual-box">
+          <div class="visual-box__step">
+            <div class="step-num">1</div>
+            <div>
+              <h4>Frame Capture</h4>
+              <p>Browser MediaStream API captures your webcam at 30fps. Each frame is drawn to a canvas and passed to MediaPipe.</p>
+            </div>
+          </div>
+          <div class="visual-box__step">
+            <div class="step-num">2</div>
+            <div>
+              <h4>Hand Detection</h4>
+              <p>MediaPipe Hands locates the hand bounding box and extracts 21 3D landmark points (fingertips, knuckles, wrist).</p>
+            </div>
+          </div>
+          <div class="visual-box__step">
+            <div class="step-num">3</div>
+            <div>
+              <h4>Feature Extraction</h4>
+              <p>Landmark coordinates are normalized relative to the wrist, making detection scale- and position-invariant.</p>
+            </div>
+          </div>
+          <div class="visual-box__step">
+            <div class="step-num">4</div>
+            <div>
+              <h4>Gesture Classification</h4>
+              <p>A trained model (TensorFlow.js / rule-based classifier) maps features to one of 26 ASL letters with a confidence score.</p>
+            </div>
+          </div>
+          <div class="visual-box__step">
+            <div class="step-num">5</div>
+            <div>
+              <h4>Text + TTS Output</h4>
+              <p>Predicted letters are accumulated into words. Web Speech API optionally reads them aloud.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="content-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Technology</span>
+        <h2>Built with open-source tools</h2>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-card__icon">🖐️</div>
+          <h4>MediaPipe Hands</h4>
+          <p>Google's real-time hand landmark tracker — runs at 30fps in-browser via WebAssembly</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">🧠</div>
+          <h4>TensorFlow.js</h4>
+          <p>Neural network inference in the browser — no server, no latency, full privacy</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">🐍</div>
+          <h4>Python / FastAPI</h4>
+          <p>Backend API for model training, history storage, and server-side inference fallback</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">👁️</div>
+          <h4>OpenCV</h4>
+          <p>Image preprocessing, gesture augmentation, and training pipeline video processing</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">🔊</div>
+          <h4>Web Speech API</h4>
+          <p>Built-in browser TTS — no third-party dependency for speech output</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">🌐</div>
+          <h4>WebSockets</h4>
+          <p>Real-time bidirectional communication between frontend and backend inference server</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">🗃️</div>
+          <h4>SQLite</h4>
+          <p>Lightweight local database for translation history and user session storage</p>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card__icon">📦</div>
+          <h4>Scikit-learn</h4>
+          <p>Model training, evaluation, cross-validation, and hyperparameter tuning utilities</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODEL INFO -->
+  <section class="content-section">
+    <div class="container">
+      <div class="two-col two-col--reverse">
+        <div class="visual-box">
+          <div style="text-align:center;padding:16px 0;">
+            <div style="font-size:3rem;margin-bottom:8px;">🤖</div>
+            <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;margin-bottom:8px;">ASL Classifier</h3>
+            <p style="color:var(--col-muted);font-size:.9rem;margin-bottom:20px;">Gesture recognition model</p>
+          </div>
+          <div style="display:grid;gap:12px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Architecture</span>
+              <span style="font-weight:500;font-size:.85rem;">MLP / Dense NN</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Input features</span>
+              <span style="font-weight:500;font-size:.85rem;">63 landmarks (x,y,z × 21)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Output classes</span>
+              <span style="font-weight:500;font-size:.85rem;">26 (A–Z)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Train accuracy</span>
+              <span style="font-weight:500;font-size:.85rem;color:var(--col-success);">~97%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Inference speed</span>
+              <span style="font-weight:500;font-size:.85rem;">~5ms per frame</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--col-surface);border-radius:var(--radius-sm);border:1px solid var(--col-border);">
+              <span style="color:var(--col-muted);font-size:.85rem;">Dataset</span>
+              <span style="font-weight:500;font-size:.85rem;">ASL Alphabet (Kaggle)</span>
+            </div>
+          </div>
+        </div>
+        <div class="prose">
+          <span class="section-tag">The Model</span>
+          <h2>A gesture classifier built for the browser</h2>
+          <p>Rather than processing raw pixels, SignBridge uses a two-stage approach: first, MediaPipe extracts normalized hand landmark coordinates; then, a compact neural network classifies the pose.</p>
+          <p>This design runs entirely client-side with zero latency, as no video data leaves your device. The model was trained on the ASL Alphabet dataset (Kaggle) and fine-tuned with custom-collected samples for edge cases.</p>
+          <p>Accuracy varies by lighting conditions, hand size, and skin tone. We are continually collecting diverse samples to improve equity across demographic groups.</p>
+          <a href="contact.html" class="btn btn--ghost" style="margin-top:16px;">Contribute training data →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESSIBILITY -->
+  <section class="content-section" style="background:linear-gradient(135deg,#eef2ff,#ede9fe);border-top:1px solid var(--col-border);border-bottom:1px solid var(--col-border);">
+    <div class="container" style="text-align:center;max-width:680px;">
+      <span class="section-tag">Accessibility</span>
+      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:700;margin:12px 0;">Inclusive by design</h2>
+      <p style="color:var(--col-muted);line-height:1.75;margin-bottom:24px;">
+        SignBridge was built to reduce communication barriers — not create new ones.
+        The interface uses WCAG AA-compliant colors, large touch targets, keyboard navigation,
+        and screen reader support throughout. We believe communication is a human right.
+      </p>
+      <a href="translator.html" class="btn btn--primary btn--large">Try it now — it's free</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <span class="footer__logo">✦ SignBridge</span>
+        <p>Built with ❤️ for accessibility</p>
+        <nav class="footer__nav">
+          <a href="../index.html">Home</a>
+          <a href="translator.html">Translate</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/darkmode.js"></script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>/* Prevent dark mode flash */
+    (function(){var t=localStorage.getItem("sb_theme");if(!t&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";if(t)document.documentElement.setAttribute("data-theme",t);})();
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Practice Mode — SignBridge</title>
+  <link rel="stylesheet" href="../assets/css/main.css"/>
+  <link rel="stylesheet" href="../assets/css/translator.css"/>
+  <link rel="stylesheet" href="../assets/css/practice.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/darkmode.css"/>
+</head>
+<body class="translator-page">
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="../index.html" class="nav__logo"><span class="nav__logo-icon">✦</span> SignBridge</a>
+    <ul class="nav__links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="translator.html">Translate</a></li>
+      <li><a href="practice.html" class="active">Practice</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <button class="nav__hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="container">
+      <div>
+        <h1>🎯 Practice Mode</h1>
+        <p>AI-powered feedback using your trained ML model</p>
+      </div>
+      <div class="page-header__controls">
+        <div class="status-badge status-badge--idle" id="statusBadge">
+          <span class="status-dot"></span>
+          <span id="statusText">Camera off</span>
+        </div>
+        <div class="ml-indicator" id="mlIndicator">
+          <span class="ml-dot"></span>
+          <span id="mlLabel">Checking model…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE SELECTOR -->
+  <div class="exercise-bar">
+    <div class="container">
+      <div class="exercise-bar__inner">
+        <span class="exercise-bar__label">Exercise:</span>
+        <div class="exercise-tabs">
+          <button class="exercise-tab active" data-mode="alphabet">🔤 Alphabet</button>
+          <button class="exercise-tab" data-mode="words">💬 Words</button>
+          <button class="exercise-tab" data-mode="spelling">✏️ Spell a Word</button>
+          <button class="exercise-tab" data-mode="speed">⚡ Speed Round</button>
+          <button class="exercise-tab" data-mode="quiz">🧠 Quiz</button>
+        </div>
+        <div class="exercise-bar__stats">
+          <span class="session-stat">🏆 Score: <strong id="totalScore">0</strong></span>
+          <span class="session-stat">🔥 Streak: <strong id="streakCount">0</strong></span>
+          <span class="session-stat">✅ Done: <strong id="doneCount">0</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="practice-main">
+    <div class="container">
+      <div class="practice-grid">
+
+        <!-- LEFT: CAMERA + FEEDBACK -->
+        <div class="practice-left">
+
+          <!-- CAMERA PANEL -->
+          <div class="panel">
+            <div class="panel__header">
+              <span class="panel__title">📷 Camera</span>
+              <span id="fpsCounter" style="font-size:.8rem;color:var(--col-muted);">— fps</span>
+            </div>
+            <div class="panel__body">
+              <div class="video-container">
+                <video id="webcamFeed" autoplay playsinline muted></video>
+                <canvas id="overlayCanvas"></canvas>
+                <div class="video-placeholder" id="videoPlaceholder">
+                  <div class="video-placeholder__icon">🎥</div>
+                  <p>Start camera to begin practice</p>
+                </div>
+                <!-- Countdown overlay -->
+                <div class="countdown-overlay" id="countdownOverlay" style="display:none;">
+                  <div class="countdown-num" id="countdownNum">3</div>
+                </div>
+                <!-- Result flash overlay -->
+                <div class="result-flash" id="resultFlash" style="display:none;">
+                  <div class="result-flash__icon" id="resultFlashIcon"></div>
+                  <div class="result-flash__text" id="resultFlashText"></div>
+                </div>
+              </div>
+              <div class="video-controls">
+                <button class="btn btn--primary" id="btnStartCamera">▶ Start Camera</button>
+                <button class="btn btn--danger" id="btnStopCamera" style="display:none;">⬛ Stop</button>
+              </div>
+              <!-- Live detection bar -->
+              <div class="live-detection" id="liveDetection">
+                <div class="live-detection__label">Detecting:</div>
+                <div class="live-detection__letter" id="liveLetterEl">—</div>
+                <div class="live-detection__conf">
+                  <div class="confidence-bar" style="flex:1;">
+                    <div class="confidence-bar__fill" id="liveConfBar"></div>
+                  </div>
+                  <span id="liveConfVal">0%</span>
+                </div>
+                <div class="live-detection__source" id="detectionSource">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROGRESS THIS SESSION -->
+          <div class="panel" style="margin-top:16px;">
+            <div class="panel__header"><span class="panel__title">📊 Session Progress</span>
+              <button class="btn btn--ghost" id="btnResetSession" style="padding:5px 12px;font-size:.78rem;">Reset</button>
+            </div>
+            <div class="panel__body">
+              <div class="session-stats-grid">
+                <div class="session-card session-card--score">
+                  <div class="session-card__val" id="scoreDisplay">0</div>
+                  <div class="session-card__label">Total Score</div>
+                </div>
+                <div class="session-card session-card--correct">
+                  <div class="session-card__val" id="correctDisplay">0</div>
+                  <div class="session-card__label">Correct</div>
+                </div>
+                <div class="session-card session-card--wrong">
+                  <div class="session-card__val" id="wrongDisplay">0</div>
+                  <div class="session-card__label">Wrong</div>
+                </div>
+                <div class="session-card session-card--streak">
+                  <div class="session-card__val" id="streakDisplay">0</div>
+                  <div class="session-card__label">Best Streak</div>
+                </div>
+              </div>
+              <!-- Accuracy bar -->
+              <div class="accuracy-row">
+                <span>Accuracy</span>
+                <div class="confidence-bar" style="flex:1;margin:0 12px;">
+                  <div class="confidence-bar__fill" id="accuracyBar" style="background:linear-gradient(90deg,#22c55e,#16a34a);"></div>
+                </div>
+                <span id="accuracyVal">0%</span>
+              </div>
+              <!-- Per-letter progress (alphabet mode) -->
+              <div id="letterProgressWrap" style="margin-top:16px;">
+                <div class="progress-label">Letters practiced:</div>
+                <div class="letter-progress-grid" id="letterProgressGrid"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: EXERCISE PANEL -->
+        <div class="practice-right">
+
+          <!-- ── ALPHABET MODE ───────────────────────── -->
+          <div class="exercise-panel" id="panelAlphabet">
+            <div class="panel">
+              <div class="panel__header"><span class="panel__title">🔤 Alphabet Practice</span></div>
+              <div class="panel__body">
+                <div class="target-display">
+                  <div class="target-label">Sign this letter:</div>
+                  <div class="target-letter" id="targetLetter">A</div>
+                  <div class="target-hint" id="targetHint">Make a fist with thumb to the side</div>
+                </div>
+
+                <div class="feedback-zone" id="feedbackZone">
+                  <div class="feedback-waiting">
+                    <div class="feedback-waiting__icon">👀</div>
+                    <p>Start camera and show the gesture</p>
+                  </div>
+                </div>
+
+                <div class="exercise-controls">
+                  <button class="btn btn--ghost" id="btnSkipLetter">⏭ Skip</button>
+                  <button class="btn btn--primary" id="btnNextLetter" style="display:none;">Next →</button>
+                  <button class="btn btn--ghost" id="btnRepeatLetter">🔁 Repeat</button>
+                </div>
+
+                <!-- Order selector -->
+                <div class="order-selector">
+                  <span style="font-size:.82rem;color:var(--col-muted);">Order:</span>
+                  <button class="order-btn active" id="btnOrderSeq">A→Z</button>
+                  <button class="order-btn" id="btnOrderRand">Random</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── WORD MODE ───────────────────────────── -->
+          <div class="exercise-panel" id="panelWords" style="display:none;">
+            <div class="panel">
+              <div class="panel__header"><span class="panel__title">💬 Word Gesture Practice</span></div>
+              <div class="panel__body">
+                <div class="target-display">
+                  <div class="target-label">Sign this word:</div>
+                  <div class="target-word-emoji" id="targetWordEmoji">👋</div>
+                  <div class="target-letter" id="targetWord" style="font-size:2.5rem;">Hello</div>
+                  <div class="target-hint" id="targetWordHint">Open palm facing forward</div>
+                </div>
+                <div class="feedback-zone" id="feedbackZoneWord">
+                  <div class="feedback-waiting"><div class="feedback-waiting__icon">👀</div><p>Show the gesture</p></div>
+                </div>
+                <div class="exercise-controls">
+                  <button class="btn btn--ghost" id="btnSkipWord">⏭ Skip</button>
+                  <button class="btn btn--primary" id="btnNextWord" style="display:none;">Next →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── SPELLING MODE ───────────────────────── -->
+          <div class="exercise-panel" id="panelSpelling" style="display:none;">
+            <div class="panel">
+              <div class="panel__header"><span class="panel__title">✏️ Spell a Word</span></div>
+              <div class="panel__body">
+                <div class="spell-word-selector">
+                  <label style="font-size:.85rem;color:var(--col-muted);font-weight:500;">Choose a word to spell:</label>
+                  <div class="spell-word-chips" id="spellWordChips"></div>
+                  <div style="display:flex;gap:8px;margin-top:8px;">
+                    <input type="text" id="customWordInput" placeholder="Or type your own word…"
+                      style="flex:1;padding:10px 14px;border:1.5px solid var(--col-border);border-radius:var(--radius-md);font-family:var(--font-body);font-size:.9rem;background:var(--col-bg);outline:none;"/>
+                    <button class="btn btn--primary" id="btnSetCustomWord" style="padding:10px 18px;">Set</button>
+                  </div>
+                </div>
+
+                <div class="spell-progress" id="spellProgress" style="margin-top:20px;">
+                  <div class="spell-target-word" id="spellTargetWord"></div>
+                  <div class="spell-chars" id="spellChars"></div>
+                  <div class="spell-current-prompt">
+                    <span>Now sign:</span>
+                    <span class="spell-current-letter" id="spellCurrentLetter">—</span>
+                  </div>
+                  <div class="feedback-zone" id="feedbackZoneSpell">
+                    <div class="feedback-waiting"><div class="feedback-waiting__icon">👀</div><p>Show the gesture</p></div>
+                  </div>
+                </div>
+
+                <div class="exercise-controls" style="margin-top:12px;">
+                  <button class="btn btn--ghost" id="btnResetSpell">🔁 Restart Word</button>
+                  <button class="btn btn--ghost" id="btnNewSpellWord">🔀 New Word</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── SPEED ROUND ─────────────────────────── -->
+          <div class="exercise-panel" id="panelSpeed" style="display:none;">
+            <div class="panel">
+              <div class="panel__header"><span class="panel__title">⚡ Speed Round</span></div>
+              <div class="panel__body">
+                <div class="speed-setup" id="speedSetup">
+                  <div style="text-align:center;padding:24px 0;">
+                    <div style="font-size:3rem;margin-bottom:12px;">⚡</div>
+                    <h3 style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;margin-bottom:8px;">Speed Round</h3>
+                    <p style="color:var(--col-muted);margin-bottom:24px;">Sign as many correct letters as you can in 60 seconds!</p>
+                    <div class="speed-options">
+                      <label style="font-size:.85rem;color:var(--col-muted);">Duration:</label>
+                      <select id="speedDuration" style="padding:8px 14px;border:1.5px solid var(--col-border);border-radius:var(--radius-md);font-family:var(--font-body);background:var(--col-bg);">
+                        <option value="30">30 seconds</option>
+                        <option value="60" selected>60 seconds</option>
+                        <option value="120">2 minutes</option>
+                      </select>
+                    </div>
+                    <button class="btn btn--primary btn--large" id="btnStartSpeed" style="margin-top:20px;">Start Speed Round</button>
+                  </div>
+                </div>
+
+                <div class="speed-game" id="speedGame" style="display:none;">
+                  <div class="speed-header">
+                    <div class="speed-timer-wrap">
+                      <div class="speed-timer" id="speedTimer">60</div>
+                      <div class="speed-timer-label">seconds left</div>
+                    </div>
+                    <div class="speed-score-live">
+                      <div class="speed-score-num" id="speedScore">0</div>
+                      <div class="speed-score-label">points</div>
+                    </div>
+                  </div>
+                  <div class="speed-timer-bar"><div class="speed-timer-fill" id="speedTimerFill"></div></div>
+                  <div class="target-display" style="padding:20px 0;">
+                    <div class="target-label">Sign this:</div>
+                    <div class="target-letter" id="speedTarget">A</div>
+                  </div>
+                  <div class="speed-combo" id="speedCombo" style="display:none;">
+                    <span>🔥 Combo ×<span id="comboMult">1</span></span>
+                  </div>
+                </div>
+
+                <div class="speed-results" id="speedResults" style="display:none;">
+                  <div class="speed-results__inner">
+                    <div style="font-size:3rem;">🏆</div>
+                    <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:900;margin:8px 0;" id="speedFinalScore">0</h3>
+                    <p style="color:var(--col-muted);">points scored</p>
+                    <div class="speed-result-stats">
+                      <div><strong id="speedCorrectFinal">0</strong><span>Correct</span></div>
+                      <div><strong id="speedWrongFinal">0</strong><span>Wrong</span></div>
+                      <div><strong id="speedBestStreak">0</strong><span>Best Streak</span></div>
+                      <div><strong id="speedBestCombo">×1</strong><span>Best Combo</span></div>
+                    </div>
+                    <button class="btn btn--primary btn--large" id="btnPlayAgain" style="margin-top:20px;">Play Again</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── QUIZ MODE ───────────────────────────── -->
+          <div class="exercise-panel" id="panelQuiz" style="display:none;">
+            <div class="panel">
+              <div class="panel__header"><span class="panel__title">🧠 Quiz Mode</span></div>
+              <div class="panel__body">
+                <div class="quiz-header">
+                  <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill"></div></div>
+                  <span style="font-size:.82rem;color:var(--col-muted);">Question <span id="quizCurrent">1</span> / <span id="quizTotal">10</span></span>
+                </div>
+
+                <div class="quiz-question">
+                  <div class="target-label">The model detects this gesture — which letter is it?</div>
+                  <div class="target-display" style="padding:16px 0;">
+                    <div class="target-letter" id="quizTarget">?</div>
+                    <div class="target-hint" id="quizHint" style="margin-top:8px;"></div>
+                  </div>
+                </div>
+
+                <div class="quiz-options" id="quizOptions"></div>
+
+                <div class="quiz-feedback" id="quizFeedback" style="display:none;"></div>
+
+                <div class="exercise-controls" style="margin-top:16px;">
+                  <button class="btn btn--primary" id="btnQuizNext" style="display:none;">Next Question →</button>
+                </div>
+
+                <div class="quiz-results" id="quizResults" style="display:none;">
+                  <div style="text-align:center;padding:24px;">
+                    <div style="font-size:3rem;margin-bottom:8px;" id="quizResultEmoji">🎉</div>
+                    <h3 style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;" id="quizResultScore"></h3>
+                    <p style="color:var(--col-muted);margin:8px 0 20px;" id="quizResultMsg"></p>
+                    <button class="btn btn--primary" id="btnQuizRestart">Try Again</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACHIEVEMENT TOASTS -->
+          <div class="achievement-area" id="achievementArea"></div>
+
+          <!-- HISTORY LOG -->
+          <div class="panel" style="margin-top:16px;">
+            <div class="panel__header">
+              <span class="panel__title">📋 Attempt Log</span>
+              <button class="btn btn--ghost" id="btnClearLog" style="padding:5px 12px;font-size:.78rem;">Clear</button>
+            </div>
+            <div class="panel__body">
+              <div class="attempt-log" id="attemptLog">
+                <div class="history-empty">No attempts yet. Start practicing!</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MediaPipe CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+  <script src="../assets/js/nav.js"></script>
+  <script src="../assets/js/darkmode.js"></script>
+  <script src="../assets/js/gesture-classifier.js"></script>
+  <script src="../assets/js/practice.js"></script>
+</body>
+</html>
